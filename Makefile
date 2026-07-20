@@ -1,7 +1,7 @@
 NAME :=	RetroEmu
 
 CXX :=		c++
-CXXFLAGS :=	-g -MP -MMD -Wall -Wextra -Werror -std=c++17 -O3
+CXXFLAGS :=	-g -MP -MMD -Wall -Wextra -Werror -std=c++17 -O2
 
 LIB_DIR :=	lib/
 INC_DIR :=	inc/

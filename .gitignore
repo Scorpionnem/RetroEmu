@@ -4,3 +4,4 @@
 RetroEmu
 *.gb
 *.gbc
+/.direnv/
