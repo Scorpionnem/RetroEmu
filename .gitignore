@@ -5,3 +5,5 @@
 *.gb
 *.gbc
 /.direnv/
+compile_commands.json
+.cache/

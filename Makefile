@@ -41,6 +41,9 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+compile_commands.json: fclean
+	bear -- $(MAKE) -j $(OBJS)
+
+.PHONY: all clean fclean re compile_commands.json
 
 -include $(DEPS)
