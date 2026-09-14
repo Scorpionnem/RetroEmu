@@ -1,11 +1,11 @@
 NAME := RetroEmu
 
-CXX := clang++
-CXXFLAGS := -g -MP -MMD -Wall -Wextra -Werror -std=c++23 -O2
+CXX := g++
+CXXFLAGS := -g -MP -MMD -Wall -Wextra -Werror -std=c++26 -freflection -O2
 
 INC_DIR := include
 SRC_DIR := src
-OBJ_DIR := .obj/
+OBJ_DIR := .obj
 
 SDL_CFLAGS := $(shell sdl2-config --cflags)
 SDL_LIBS := $(shell sdl2-config --libs)

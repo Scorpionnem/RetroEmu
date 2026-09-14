@@ -1,22 +1,25 @@
-#include <iostream>
+#include <RetroEmu/Cartridge.hpp>
 
-#include "CPU.hpp"
+#include <print>
 
-int main(int ac, char **av)
+int main(int argc, char **argv)
 {
-    if (ac != 2)
-        return (1);
+	if (argc != 2)
+	{
+		std::println(stderr, "Usage: {} <rom>", argv[0]);
+		return 1;
+	}
 
-    Cartridge   cart;
+	auto cartridge = remu::Cartridge::TryLoad(argv[1]);
+	if (!cartridge)
+	{
+		cartridge.error().visit([](auto&& err) {
+			std::println(stderr, "Failed to load cartridge: {}", err);
+		});
+		return 1;
+	}
+	
+	std::println("{}", cartridge->GetHeader());
 
-    cart.load(av[1]);
-
-    std::cout << "title: " << cart.header.title << std::endl;
-    std::cout << "cgbFlag: " << (int)cart.header.cgbFlag << std::endl;
-    std::cout << "cartType: " << (int)cart.header.cartType << std::endl;
-    std::cout << "romSize: " << (int)cart.header.romSize << std::endl;
-    std::cout << "ramSize: " << (int)cart.header.ramSize << std::endl;
-    std::cout << "checksum: " << (int)cart.header.checksum << std::endl;
-
-    return (0);
+	return 0;
 }
