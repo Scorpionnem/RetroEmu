@@ -19,7 +19,30 @@
     {
       formatter = forAllSystems (pkgs: pkgs.nixfmt);
       devShells = forAllSystems (pkgs: {
-        default = (import ./shell.nix) { inherit pkgs; };
+        default =
+          let
+            stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.llvmPackages_23.stdenv;
+          in
+          (pkgs.mkShell.override { inherit stdenv; }) {
+            nativeBuildInputs = with pkgs; [
+              nasm
+              valgrind
+              gdb
+
+              clang-tools
+              bear
+
+              pkgconf
+              cmake
+              ninja
+
+              SDL2
+              SDL2_image
+              SDL2_ttf
+
+              skyemu
+            ];
+          };
       });
     };
 }

@@ -1,32 +1,37 @@
-NAME :=	RetroEmu
+NAME := RetroEmu
 
-CXX :=		c++
-CXXFLAGS :=	-g -MP -MMD -Wall -Wextra -Werror -std=c++17 -O2
+CXX := clang++
+CXXFLAGS := -g -MP -MMD -Wall -Wextra -Werror -std=c++23 -O2
 
-LIB_DIR :=	lib/
-INC_DIR :=	inc/
-SRC_DIR :=	src/
-OBJ_DIR :=	.obj/
+INC_DIR := include
+SRC_DIR := src
+OBJ_DIR := .obj/
 
-SDL_CFLAGS :=	$(shell sdl2-config --cflags)
-SDL_LIBS :=		$(shell sdl2-config --libs)
+SDL_CFLAGS := $(shell sdl2-config --cflags)
+SDL_LIBS := $(shell sdl2-config --libs)
 
-INCLUDE_DIRS :=	-I$(INC_DIR) $(SDL_CFLAGS) -I$(LIB_DIR)
-LFLAGS :=		$(SDL_LIBS)
+CXXFLAGS += $(SDL_CFLAGS) -I$(INC_DIR)
+LFLAGS := $(SDL_LIBS)
 
-SRCS :=	src/main.cpp	\
+_ := $(shell find $(SRC_DIR)/ -type f -name '*.cpp' | LC_ALL=C sort | sed 's/^src\//SRCS += /' > sources.mk)
+_ := $(shell find $(SRC_DIR)/ -type d | LC_ALL=C sort | sed 's/^src\//SRCS_DIR += /' >> sources.mk)
 
-OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
-DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)
+CXXFLAGS += $(SRCS_DIR:%=-I%)
+
+include sources.mk
+
+OBJS := $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
+DEPS := $(SRCS:%.cpp=$(OBJ_DIR)/%.d)
+SRCS := $(addprefix $(SRC_DIR)/,$(SRCS))
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LFLAGS)
 
-$(OBJ_DIR)%.o: %.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)
