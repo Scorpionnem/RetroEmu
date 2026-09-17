@@ -20,10 +20,8 @@ class MemoryMap
 		};
 	public:
 		~MemoryMap() noexcept;
-		MemoryMap(const MemoryMap &) = delete;
-		MemoryMap(MemoryMap &&) noexcept = default;
-		MemoryMap &operator=(const MemoryMap &) = delete;
-		MemoryMap &operator=(MemoryMap &&) noexcept = default;
+		MemoryMap(MemoryMap &&) noexcept;
+		MemoryMap &operator=(MemoryMap &&) noexcept;
 
 		[[nodiscard]] constexpr uint8_t& operator[](size_t index) noexcept { return data[index]; }
 		[[nodiscard]] constexpr uint8_t const& operator[](size_t index) const noexcept { return data[index]; }
@@ -32,7 +30,9 @@ class MemoryMap
 
 		[[nodiscard]] static std::expected<MemoryMap, CreationError> Create(const std::string_view path) noexcept;
 	private:
-		MemoryMap(uint8_t *data, size_t size) noexcept : data(data), size(size) {}
+		constexpr MemoryMap(uint8_t *data, size_t size) noexcept : data(data), size(size) {}
+		MemoryMap(const MemoryMap &) = delete;
+		MemoryMap &operator=(const MemoryMap &) = delete;
 
 		uint8_t *data;
 		size_t size;

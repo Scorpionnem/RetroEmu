@@ -11,6 +11,7 @@ int main(int argc, char **argv)
 	}
 
 	auto cartridge = remu::Cartridge::TryLoad(argv[1]);
+	std::println(stderr, "cartridge.error? {}", cartridge.has_value());
 	if (!cartridge)
 	{
 		cartridge.error().visit([](auto&& err) {

@@ -1,6 +1,8 @@
 #include <RetroEmu/Util/FileDescriptor.hpp>
 #include <RetroEmu/Util/MemoryMap.hpp>
 
+#include <memory>
+
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -8,6 +10,28 @@
 
 namespace remu
 {
+
+MemoryMap::MemoryMap(MemoryMap &&other) noexcept
+	: data(std::exchange(other.data, nullptr)), size(std::exchange(other.size, 0))
+{
+}
+
+MemoryMap &MemoryMap::operator=(MemoryMap &&other) noexcept
+{
+	if (this != &other)
+	{
+		std::destroy_at(this);
+		std::construct_at(this, std::move(other));
+    }
+	return *this;
+}
+
+MemoryMap::~MemoryMap() noexcept
+{
+	if (data != nullptr && data != MAP_FAILED)
+		munmap(data, size);
+}
+
 
 std::expected<MemoryMap, MemoryMap::CreationError> MemoryMap::Create(const std::string_view path) noexcept
 {
@@ -24,12 +48,6 @@ std::expected<MemoryMap, MemoryMap::CreationError> MemoryMap::Create(const std::
 	if (data == MAP_FAILED) return std::unexpected(CreationError::MapFailed);
 
 	return MemoryMap(data, size);
-}
-
-MemoryMap::~MemoryMap() noexcept
-{
-	if (data != nullptr && data != MAP_FAILED)
-		munmap(data, size);
 }
 
 }; // namespace remu

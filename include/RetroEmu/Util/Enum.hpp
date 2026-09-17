@@ -15,13 +15,13 @@ namespace remu
 template <typename E>
 requires std::is_enum_v<E>
 constexpr std::string_view EnumName(E value) {
-    template for (constexpr auto enumerator : std::define_static_array(std::meta::enumerators_of(^^E)))
-    {
-        if (value == [:enumerator:])
-            return std::meta::identifier_of(enumerator);
-    }
+	template for (constexpr auto enumerator : std::define_static_array(std::meta::enumerators_of(^^E)))
+	{
+		if (value == [:enumerator:])
+			return std::meta::identifier_of(enumerator);
+	}
 
-    return "<unknown>";
+	return "<unknown>";
 }
 
 #define DEFINE_ENUM_FORMATTER(typename) \

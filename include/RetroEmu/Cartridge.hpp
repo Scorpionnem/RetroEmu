@@ -15,10 +15,10 @@ namespace remu
 
 class Cartridge
 {
-    public:
-        // https://gbdev.io/pandocs/The_Cartridge_Header.html#the-cartridge-header
-        class Header
-        {
+	public:
+		// https://gbdev.io/pandocs/The_Cartridge_Header.html#the-cartridge-header
+		class Header
+		{
 			public:
 				static constexpr size_t SIZE = 0x14D;
 	
@@ -47,24 +47,24 @@ class Cartridge
 				{
 					std::strncpy(title, reinterpret_cast<const char*>(titleData), 16);
 				}
-        };
-    public:
-		Cartridge(const Cartridge&) = delete;
-		Cartridge(Cartridge&&) = default;
-		Cartridge& operator=(const Cartridge&) = delete;
-		Cartridge& operator=(Cartridge&&) = default;
-        ~Cartridge() = default;
+		};
+	public:
+		Cartridge(Cartridge&&) noexcept = default;
+		Cartridge& operator=(Cartridge&&) noexcept = default;
+		~Cartridge() noexcept = default;
 
 		[[nodiscard]] const Header& GetHeader() const noexcept { return header; }
 
 		using LoadError = std::variant<Header::CreationError, MemoryMap::CreationError>;
 
 		[[nodiscard]] static std::expected<Cartridge, LoadError> TryLoad(const std::string_view path) noexcept;
-    private:
+	private:
 		constexpr Cartridge(MemoryMap rom, Header header) noexcept
 			: header(std::move(header)), rom(std::move(rom)) {}
+		Cartridge(const Cartridge&) = delete;
+		Cartridge& operator=(const Cartridge&) = delete;
 
-        Header header;
+		Header header;
 		MemoryMap rom;
 };
 
